@@ -48,7 +48,7 @@ contract CoinCoin {
     }
 
     function approve(address spender, uint256 value) public returns (bool) {
-        require(value <= _balances[msg.sender], "CoinCoin: can not apporve");
+        require(value <= _balances[msg.sender], "CoinCoin: can not approve");
         emit Approval(msg.sender, spender, value);
         _balances[msg.sender] -= value;
         _allowances[msg.sender][spender] += value;
