@@ -15,9 +15,14 @@ contract CoinCoin {
         uint256 amount
     );
     event Approval(
-        address indexed _owner,
-        address indexed _spender,
-        uint256 _value
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
+    event Disapproval(
+        address indexed spender,
+        address indexed owner,
+        uint256 value
     );
 
     constructor(address owner_, uint256 totalSupply_) {
@@ -64,6 +69,32 @@ contract CoinCoin {
         emit Approval(owner, spender, value);
         _balances[owner] -= value;
         _allowances[owner][spender] += value;
+        return true;
+    }
+
+    function disapprove(address spender, uint256 value) public returns (bool) {
+        require(
+            value <= _allowances[msg.sender][spender],
+            "CoinCoin: can not disapprove"
+        );
+        emit Disapproval(spender, msg.sender, value);
+        _allowances[msg.sender][spender] -= value;
+        _balances[msg.sender] += value;
+        return true;
+    }
+
+    function disapproveFrom(
+        address owner,
+        address spender,
+        uint256 value
+    ) public returns (bool) {
+        require(
+            value <= _allowances[owner][spender],
+            "CoinCoin: can not disapproveFrom"
+        );
+        emit Disapproval(spender, owner, value);
+        _allowances[owner][spender] -= value;
+        _balances[owner] += value;
         return true;
     }
 
