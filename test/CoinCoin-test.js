@@ -43,16 +43,11 @@ describe('CoinCoin Token', function () {
       expect(await coincoin.balanceOf(owner.address)).to.equal(INITIAL_SUPPLY)
     })
 
-    it('emits event Transfer when mint totalSupply', async function () {
-      /*
-      Pb de récupération de l'event d'une transaction passée avec Waffle: Sofiane s'en occupe
-      await expect(
-        CoinCoin.connect(dev).deploy(
-          owner.address,
-          ethers.utils.parseEther('8000000000')
-        )
-      ).to.emit(, 'Transfer').withArgs(ethers.constants.AddressZero, owner.address, ethers.utils.parseEther('8000000000'));
-      */
+    it('emits event Transfer when mint initial supply to owner at deployement', async function () {
+      let tx = await coincoin.deployTransaction
+      await expect(tx)
+        .to.emit(coincoin, 'Transfer')
+        .withArgs(ethers.constants.AddressZero, owner.address, INITIAL_SUPPLY)
     })
   })
 
@@ -64,9 +59,17 @@ describe('CoinCoin Token', function () {
       expect(await coincoin.balanceOf(bob.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('emits event Transfer when transfer tokens', async function () {
-
+      let tx = await coincoin.deployTransaction
+      await expect(tx)
+        .to.emit(coincoin, 'Transfer')
+        .withArgs(owner.address, alice.address, TRANSFER_AMOUNT)
     })
-    it('emits event Transfer when transferFrom tokens', async function () { })
+    it('emits event Transfer when transferFrom tokens', async function () {
+      let tx = await coincoin.deployTransaction
+      await expect(tx)
+        .to.emit(coincoin, 'Transfer')
+        .withArgs(owner.address, bob.address, TRANSFER_AMOUNT)
+    })
   })
 
   describe('Allowance system', function () {
@@ -77,8 +80,16 @@ describe('CoinCoin Token', function () {
       expect(await coincoin.allowanceOf(owner.address, dan.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('emits event Approve when approve tokens', async function () {
-
+      let tx = await coincoin.deployTransaction
+      await expect(tx)
+        .to.emit(coincoin, 'Approve')
+        .withArgs(owner.address, charlie.address, TRANSFER_AMOUNT)
     })
-    it('emits event Approve when approveFrom tokens', async function () { })
+    it('emits event Approve when approveFrom tokens', async function () {
+      let tx = await coincoin.deployTransaction
+      await expect(tx)
+        .to.emit(coincoin, 'Transfer')
+        .withArgs(owner.address, dan.address, TRANSFER_AMOUNT)
+    })
   })
 })
