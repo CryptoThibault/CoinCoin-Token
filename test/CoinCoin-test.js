@@ -59,14 +59,12 @@ describe('CoinCoin Token', function () {
       expect(await coincoin.balanceOf(bob.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('emits event Transfer when transfer tokens', async function () {
-      let tx = await coincoin.deployTransaction
-      await expect(tx)
+      await expect(coincoin.connect(owner).transfer(alice.address, TRANSFER_AMOUNT))
         .to.emit(coincoin, 'Transfer')
         .withArgs(owner.address, alice.address, TRANSFER_AMOUNT)
     })
     it('emits event Transfer when transferFrom tokens', async function () {
-      let tx = await coincoin.deployTransaction
-      await expect(tx)
+      await expect(coincoin.connect(owner).transferFrom(owner.address, bob.address, TRANSFER_AMOUNT))
         .to.emit(coincoin, 'Transfer')
         .withArgs(owner.address, bob.address, TRANSFER_AMOUNT)
     })
@@ -80,15 +78,13 @@ describe('CoinCoin Token', function () {
       expect(await coincoin.allowanceOf(owner.address, dan.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('emits event Approve when approve tokens', async function () {
-      let tx = await coincoin.deployTransaction
-      await expect(tx)
-        .to.emit(coincoin, 'Approve')
+      await expect(coincoin.connect(owner).approve(charlie.address, TRANSFER_AMOUNT))
+        .to.emit(coincoin, 'Approval')
         .withArgs(owner.address, charlie.address, TRANSFER_AMOUNT)
     })
     it('emits event Approve when approveFrom tokens', async function () {
-      let tx = await coincoin.deployTransaction
-      await expect(tx)
-        .to.emit(coincoin, 'Transfer')
+      await expect(coincoin.connect(owner).approveFrom(owner.address, dan.address, TRANSFER_AMOUNT))
+        .to.emit(coincoin, 'Approval')
         .withArgs(owner.address, dan.address, TRANSFER_AMOUNT)
     })
   })
