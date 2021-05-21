@@ -40,7 +40,7 @@ contract CoinCoin {
         address to,
         uint256 value
     ) public returns (bool) {
-        require(value <= _balances[from], "CoinCoin: can not transfer");
+        require(value <= _balances[from], "CoinCoin: can not transferFrom");
         emit Transfer(from, to, value);
         _balances[from] -= value;
         _balances[to] += value;
@@ -60,7 +60,7 @@ contract CoinCoin {
         address spender,
         uint256 value
     ) public returns (bool) {
-        require(value <= _balances[owner], "CoinCoin: can not approve");
+        require(value <= _balances[owner], "CoinCoin: can not approveFrom");
         emit Approval(owner, spender, value);
         _balances[owner] -= value;
         _allowances[owner][spender] += value;
