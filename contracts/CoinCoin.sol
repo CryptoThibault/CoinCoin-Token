@@ -4,10 +4,10 @@ pragma solidity ^0.8.0;
 
 contract CoinCoin {
     mapping(address => uint256) private _balances;
+    mapping(address => mapping(address => uint256)) private _allowances;
     string private _name;
     string private _symbol;
     uint256 private _totalSupply;
-    mapping(address => mapping(address => uint256)) private _allowances;
 
     event Transfer(
         address indexed sender,
