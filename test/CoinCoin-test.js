@@ -31,7 +31,7 @@ describe('CoinCoin Token', function () {
     it('Has name CoinCoin', async function () {
       expect(await coincoin.name()).to.equal(NAME)
     })
-    it('Has symbol Coin', async function () {
+    it('Has symbol COIN', async function () {
       expect(await coincoin.symbol()).to.equal(SYMBOL)
     })
     it('mints initial Supply to owner', async function () {
