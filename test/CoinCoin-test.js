@@ -16,7 +16,6 @@ describe('CoinCoin Token', function () {
     await coincoin
       .connect(owner)
       .transfer(alice.address, TRANSFER_AMOUNT)
-
     await coincoin
       .connect(owner)
       .transferFrom(owner.address, bob.address, TRANSFER_AMOUNT)
