@@ -13,18 +13,6 @@ describe('CoinCoin Token', function () {
     CoinCoin = await ethers.getContractFactory('CoinCoin')
     coincoin = await CoinCoin.connect(dev).deploy(owner.address, INITIAL_SUPPLY)
     await coincoin.deployed()
-    await coincoin
-      .connect(owner)
-      .transfer(alice.address, TRANSFER_AMOUNT)
-    await coincoin
-      .connect(owner)
-      .transferFrom(owner.address, bob.address, TRANSFER_AMOUNT)
-    await coincoin
-      .connect(owner)
-      .approve(charlie.address, TRANSFER_AMOUNT)
-    await coincoin
-      .connect(owner)
-      .approveFrom(owner.address, dan.address, TRANSFER_AMOUNT)
   })
 
   describe('Deployement', function () {
@@ -52,9 +40,15 @@ describe('CoinCoin Token', function () {
 
   describe('Token transfers', function () {
     it('transfers tokens from sender to receipient', async function () {
+      await coincoin
+        .connect(owner)
+        .transfer(alice.address, TRANSFER_AMOUNT)
       expect(await coincoin.balanceOf(alice.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('transferFrom tokens from sender to receipient', async function () {
+      await coincoin
+        .connect(owner)
+        .transferFrom(owner.address, bob.address, TRANSFER_AMOUNT)
       expect(await coincoin.balanceOf(bob.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('emits event Transfer when transfer tokens', async function () {
@@ -71,9 +65,15 @@ describe('CoinCoin Token', function () {
 
   describe('Allowance system', function () {
     it('approve tokens from sender to receipient', async function () {
+      await coincoin
+        .connect(owner)
+        .approve(charlie.address, TRANSFER_AMOUNT)
       expect(await coincoin.allowanceOf(owner.address, charlie.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('approveFrom tokens from sender to receipient', async function () {
+      await coincoin
+        .connect(owner)
+        .approveFrom(owner.address, dan.address, TRANSFER_AMOUNT)
       expect(await coincoin.allowanceOf(owner.address, dan.address)).to.equal(TRANSFER_AMOUNT)
     })
     it('emits event Approve when approve tokens', async function () {
