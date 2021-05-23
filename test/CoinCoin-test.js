@@ -39,27 +39,53 @@ describe('CoinCoin Token', function () {
   })
 
   describe('Token transfers', function () {
-    it('transfers tokens from sender to receipient', async function () {
-      await coincoin
-        .connect(owner)
-        .transfer(alice.address, TRANSFER_AMOUNT)
-      expect(await coincoin.balanceOf(alice.address)).to.equal(TRANSFER_AMOUNT)
+    describe('Simple Transfer', function () {
+      it('transfers tokens from sender to receipient', async function () {
+        await coincoin
+          .connect(owner)
+          .transfer(alice.address, TRANSFER_AMOUNT)
+        expect(await coincoin.balanceOf(alice.address)).to.equal(TRANSFER_AMOUNT)
+      })
+      it('transferFrom tokens from sender to receipient', async function () {
+        await coincoin
+          .connect(owner)
+          .transferFrom(owner.address, bob.address, TRANSFER_AMOUNT)
+        expect(await coincoin.balanceOf(bob.address)).to.equal(TRANSFER_AMOUNT)
+      })
+      it('emits event Transfer when transfer tokens', async function () {
+        await expect(coincoin.connect(owner).transfer(alice.address, TRANSFER_AMOUNT))
+          .to.emit(coincoin, 'Transfer')
+          .withArgs(owner.address, alice.address, TRANSFER_AMOUNT)
+      })
+      it('emits event Transfer when transferFrom tokens', async function () {
+        await expect(coincoin.connect(owner).transferFrom(owner.address, bob.address, TRANSFER_AMOUNT))
+          .to.emit(coincoin, 'Transfer')
+          .withArgs(owner.address, bob.address, TRANSFER_AMOUNT)
+      })
     })
-    it('transferFrom tokens from sender to receipient', async function () {
-      await coincoin
-        .connect(owner)
-        .transferFrom(owner.address, bob.address, TRANSFER_AMOUNT)
-      expect(await coincoin.balanceOf(bob.address)).to.equal(TRANSFER_AMOUNT)
-    })
-    it('emits event Transfer when transfer tokens', async function () {
-      await expect(coincoin.connect(owner).transfer(alice.address, TRANSFER_AMOUNT))
-        .to.emit(coincoin, 'Transfer')
-        .withArgs(owner.address, alice.address, TRANSFER_AMOUNT)
-    })
-    it('emits event Transfer when transferFrom tokens', async function () {
-      await expect(coincoin.connect(owner).transferFrom(owner.address, bob.address, TRANSFER_AMOUNT))
-        .to.emit(coincoin, 'Transfer')
-        .withArgs(owner.address, bob.address, TRANSFER_AMOUNT)
+    describe('Mint/Burn', function () {
+      it('mint token from address 0 to owner', async function () {
+        await coincoin
+          .connect(owner)
+          .mint(owner.address, TRANSFER_AMOUNT)
+        expect(await coincoin.balance().to.equal((INITIAL_SUPPLY + TRANSFER_AMOUNT)))
+      })
+      it('burn token from owner to address 0', async function () {
+        await coincoin
+          .connect(owner)
+          .burn(owner.address, TRANSFER_AMOUNT)
+        expect(await coincoin.balance().to.equal(INITIAL_SUPPLY - TRANSFER_AMOUNT))
+      })
+      it('emits event Transfer when mint tokens', async function () {
+        await expect(coincoin.connect(owner).mint(owner.address, TRANSFER_AMOUNT))
+          .to.emit(coincoin, 'Transfer')
+          .withArgs(ethers.constants.AddressZero, owner.address, TRANSFER_AMOUNT)
+      })
+      it('emits event Transfer when burn tokens', async function () {
+        await expect(coincoin.connect(owner).burn(owner.address, TRANSFER_AMOUNT))
+          .to.emit(coincoin, 'Transfer')
+          .withArgs(owner.address, ethers.constants.AddressZero, TRANSFER_AMOUNT)
+      })
     })
   })
 

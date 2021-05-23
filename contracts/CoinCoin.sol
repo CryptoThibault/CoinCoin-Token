@@ -52,6 +52,20 @@ contract CoinCoin {
         return true;
     }
 
+    function mint(address to, uint256 amount) public returns (bool) {
+        emit Transfer(address(0), to, amount);
+        _totalSupply += amount;
+        _balances[to] += amount;
+        return true;
+    }
+
+    function burn(address from, uint256 amount) public returns (bool) {
+        emit Transfer(from, address(0), amount);
+        _totalSupply -= amount;
+        _balances[from] -= amount;
+        return true;
+    }
+
     function approve(address spender, uint256 value) public returns (bool) {
         require(value <= _balances[msg.sender], "CoinCoin: can not approve");
         emit Approval(msg.sender, spender, value);
