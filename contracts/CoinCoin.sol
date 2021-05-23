@@ -46,6 +46,7 @@ contract CoinCoin {
         uint256 value
     ) public returns (bool) {
         require(value <= _balances[from], "CoinCoin: can not transferFrom");
+        require(from != address(0), "CoinCoin: can not transferFrom address 0");
         emit Transfer(from, to, value);
         _balances[from] -= value;
         _balances[to] += value;
@@ -60,6 +61,7 @@ contract CoinCoin {
     }
 
     function burn(address from, uint256 amount) public returns (bool) {
+        require(amount <= _balances[from], "CoinCoin: can not burn");
         emit Transfer(from, address(0), amount);
         _totalSupply -= amount;
         _balances[from] -= amount;
@@ -80,6 +82,7 @@ contract CoinCoin {
         uint256 value
     ) public returns (bool) {
         require(value <= _balances[owner], "CoinCoin: can not approveFrom");
+        require(owner != address(0), "CoinCoin: can not approveFrom address 0");
         emit Approval(owner, spender, value);
         _balances[owner] -= value;
         _allowances[owner][spender] += value;
