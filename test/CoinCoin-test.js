@@ -2,14 +2,14 @@ const { expect } = require('chai')
 const { ethers } = require('hardhat')
 
 describe('CoinCoin Token', function () {
-  let CoinCoin, coincoin, dev, owner, alice, bob, charlie, dan, eve, craig
+  let CoinCoin, coincoin, dev, owner, alice, bob, mat, lea, charlie, dan, eve, craig
   const NAME = 'CoinCoin'
   const SYMBOL = 'COIN'
   const INITIAL_SUPPLY = ethers.utils.parseEther('8000000000')
-  const TRANSFER_AMOUNT = ethers.utils.parseEther('1000000000')
+  const TRANSFER_AMOUNT = ethers.utils.parseEther('100000000')
 
-  beforeEach(async function () {
-    ;[dev, owner, alice, bob, charlie, dan, eve, craig] = await ethers.getSigners()
+  before(async function () {
+    ;[dev, owner, alice, bob, mat, lea, charlie, dan, eve, craig] = await ethers.getSigners()
     CoinCoin = await ethers.getContractFactory('CoinCoin')
     coincoin = await CoinCoin.connect(dev).deploy(owner.address, INITIAL_SUPPLY)
     await coincoin.deployed()
@@ -67,14 +67,15 @@ describe('CoinCoin Token', function () {
       it('mint token from address 0 to owner', async function () {
         await coincoin
           .connect(owner)
-          .mint(owner.address, TRANSFER_AMOUNT)
-        expect(await coincoin.balance().to.equal((INITIAL_SUPPLY + TRANSFER_AMOUNT)))
+          .mint(mat.address, TRANSFER_AMOUNT)
+        expect(await coincoin.balanceOf(mat.address)).to.equal(TRANSFER_AMOUNT)
       })
       it('burn token from owner to address 0', async function () {
+        await coincoin.connect(owner).transfer(lea.address, TRANSFER_AMOUNT)
         await coincoin
           .connect(owner)
-          .burn(owner.address, TRANSFER_AMOUNT)
-        expect(await coincoin.balance().to.equal(INITIAL_SUPPLY - TRANSFER_AMOUNT))
+          .burn(lea.address, TRANSFER_AMOUNT)
+        expect(await coincoin.balanceOf(lea.address)).to.equal(0)
       })
       it('emits event Transfer when mint tokens', async function () {
         await expect(coincoin.connect(owner).mint(owner.address, TRANSFER_AMOUNT))
@@ -103,12 +104,12 @@ describe('CoinCoin Token', function () {
           .approveFrom(owner.address, dan.address, TRANSFER_AMOUNT)
         expect(await coincoin.allowanceOf(owner.address, dan.address)).to.equal(TRANSFER_AMOUNT)
       })
-      it('emits event Approve when approve tokens', async function () {
+      it('emits event Approval when approve tokens', async function () {
         await expect(coincoin.connect(owner).approve(charlie.address, TRANSFER_AMOUNT))
           .to.emit(coincoin, 'Approval')
           .withArgs(owner.address, charlie.address, TRANSFER_AMOUNT)
       })
-      it('emits event Approve when approveFrom tokens', async function () {
+      it('emits event Approval when approveFrom tokens', async function () {
         await expect(coincoin.connect(owner).approveFrom(owner.address, dan.address, TRANSFER_AMOUNT))
           .to.emit(coincoin, 'Approval')
           .withArgs(owner.address, dan.address, TRANSFER_AMOUNT)
@@ -130,13 +131,13 @@ describe('CoinCoin Token', function () {
           .disapproveFrom(owner.address, craig.address, TRANSFER_AMOUNT)
         expect(await coincoin.allowanceOf(owner.address, craig.address)).to.equal(0)
       })
-      it('emits event Disapprove when disapprove tokens', async function () {
+      it('emits event Disapproval when disapprove tokens', async function () {
         await coincoin.connect(owner).approve(eve.address, TRANSFER_AMOUNT)
         await expect(coincoin.connect(owner).disapprove(eve.address, TRANSFER_AMOUNT))
           .to.emit(coincoin, 'Disapproval')
           .withArgs(eve.address, owner.address, TRANSFER_AMOUNT)
       })
-      it('emits event Disapprove when disapproveFrom tokens', async function () {
+      it('emits event Disapproval when disapproveFrom tokens', async function () {
         await coincoin.connect(owner).approveFrom(owner.address, craig.address, TRANSFER_AMOUNT)
         await expect(coincoin.connect(owner).disapproveFrom(owner.address, craig.address, TRANSFER_AMOUNT))
           .to.emit(coincoin, 'Disapproval')
